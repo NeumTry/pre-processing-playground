@@ -1,11 +1,10 @@
-from langchain.text_splitter import RecursiveCharacterTextSplitter, CharacterTextSplitter
-from streamlit.runtime.uploaded_file_manager import UploadedFile, UploadedFileRec
 from langchain.docstore.document import Document
 from typing import (
     List,
 )
 
 def text_splitter(splitter_choice:str, chunk_size:int, chunk_overlap:int, length_function:int, documents:List[Document]):
+    from langchain.text_splitter import RecursiveCharacterTextSplitter, CharacterTextSplitter
     # Choose splitter
     if splitter_choice == "Character":
         splitter = CharacterTextSplitter(separator = "\n\n",
@@ -28,10 +27,10 @@ def text_splitter(splitter_choice:str, chunk_size:int, chunk_overlap:int, length
     return splitter.split_documents(documents)
 
 
-def document_loading(temp_file, loader_choice:str, embed_keys: List[str] = None, metadata_keys: List[str] = None) -> List[Document]:
+def document_loading(temp_file:str, loader_choice:str, embed_keys: List[str] = None, metadata_keys: List[str] = None) -> List[Document]:
     from langchain.document_loaders import PyPDFLoader, UnstructuredFileLoader
-    from JSONLoader import JSONLoader
-    from CSVLoader import CSVLoader
+    from Loaders.JSONLoader import JSONLoader
+    from Loaders.CSVLoader import CSVLoader
     
     if loader_choice == "JSONLoader":
         loader = JSONLoader(file_path=temp_file, embed_keys=embed_keys, metadata_keys=metadata_keys)

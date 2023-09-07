@@ -98,7 +98,7 @@ if st.button("Process Text", use_container_width=True):
                 # Explicitly close the file
             temp_file.close()
             # Create a Path object using the temporary file's name attribute
-        file_path = Path(temp_file.name).resolve()
+        file_path = str(Path(temp_file.name).resolve())
         if(selectors):
             fields_to_embed = string_to_embed.split(",")
             fields_to_metadata = string_to_metadata.split(",")

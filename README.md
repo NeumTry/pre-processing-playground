@@ -2,7 +2,7 @@
 
 Project is a fork of the [Langchain Text Splitter Explorer](https://github.com/langchain-ai/text-split-explorer). 
 
-At Neum AI, we are focused on building the next generation of data pipelines built specifically for embeddings and RAG.
+At [Neum AI](https://neum.ai), we are focused on building the next generation of data pipelines built specifically for embeddings and RAG.
 Preparing data to be converted into vector embeddings and ingested in vector databases is challening.
 Different data types have different requirements and best practices to best convert them and optimize them for retrieval.
 Starting with choosing the right loader that will correctly extract the text and format from the original file.

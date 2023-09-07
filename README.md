@@ -1,5 +1,4 @@
 # Pre-processing playground
-![ui.png](ui.png)
 
 Project is a fork of the [Langchain Text Splitter Explorer](https://github.com/langchain-ai/text-split-explorer). 
 

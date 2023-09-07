@@ -1,25 +1,26 @@
-# Text Split Explorer
-
+# Pre-processing playground
 ![ui.png](ui.png)
 
-Many of the most important LLM applications involve connecting LLMs to external sources of data.
-A prerequisite to doing this is to ingest data into a format where LLMs can easily connect to them.
-Most of the time, that means ingesting data into a vectorstore.
-A prerequisite to doing this is to split the original text into smaller chunks.
+Project is a fork of the [Langchain Text Splitter Explorer](https://github.com/langchain-ai/text-split-explorer). 
 
-While this may seem trivial, it is a nuanced and overlooked step.
-When splitting text, you want to ensure that each chunk has cohesive information - e.g. you don't just want to split in the middle of sentence.
-What "cohesive information" means can differ depending on the text type as well.
-For example, with Markdown you have section delimiters (`##`) so you may want to keep those together, while for splitting Python code you may want to keep all classes and methods together (if possible).
+At Neum AI, we are focused on building the next generation of data pipelines built specifically for embeddings and RAG.
+Preparing data to be converted into vector embeddings and ingested in vector databases is challening.
+Different data types have different requirements and best practices to best convert them and optimize them for retrieval.
+Starting with choosing the right loader that will correctly extract the text and format from the original file.
+For structured data types like JSON and CSVs, separating the content that is worth embeddings and the content that should just serve as metadata is necessary.
+Once we have the text that contains our context, it must be split into smaller chunks while mantaining a cohesive information structure. - e.g. you don't just want to split in the middle of sentence.
+Chunking can take different shapes and forms depending on the type of document it is.
+For example for a Q&A document you want to keep Q&As together. If the document is report with sections, you want to keep the sections together. If it is code, you want to keep classes and methods together.
 
-This repo (and associated Streamlit app) are designed to help explore different types of text splitting.
-You can adjust different parameters and choose different types of splitters.
-By pasting a text file, you can apply the splitter to that text and see the resulting splits.
-You are also shown a code snippet that you can copy and use in your application
+Using this repo and the associated app, you can test pre-processing flows for different documents.
+It is likely that you might be processing documents that generally follow a similar structure, so optimizing your process can help you apply it across your document set.
+The app allows you to upload a file, choose the loader you want to use and the splitter to chunk it.
+In addition, you can leverage metadata selectors to attach metadata to the resulting chunks. (only available for JSONs and CSVs using the provided loaders).
+**The app does not store any data, simply uploads to temp storage to use at runtime and then cleans up.**
 
 ## Hosted App
 
-To use the hosted app, head to [https://langchain-text-splitter.streamlit.app/](https://langchain-text-splitter.streamlit.app/)
+To use the hosted app, head to [https://neumai-playground.streamlit.app/](https://neumai-playground.streamlit.app/)
 
 ## Running locally
 

@@ -2,6 +2,9 @@ from langchain.docstore.document import Document
 from typing import (
     List,
 )
+import streamlit as st
+
+from SemanticHelpers.semantic_chunking import llm_based_chunking_prep, llm_based_chunking
 
 def text_splitter(splitter_choice:str, chunk_size:int, chunk_overlap:int, length_function:int, documents:List[Document]):
     from langchain.text_splitter import RecursiveCharacterTextSplitter, CharacterTextSplitter
@@ -15,6 +18,10 @@ def text_splitter(splitter_choice:str, chunk_size:int, chunk_overlap:int, length
         splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, 
                                                   chunk_overlap=chunk_overlap,
                                          length_function=length_function)
+    elif splitter_choice == "🪄 Smart Chunking":
+        splitter_code = llm_based_chunking_prep(documents[0].page_content)
+        st.session_state.splitter_code = splitter_code
+        return llm_based_chunking(documents=documents, chunking_code_exec=splitter_code)
     elif "Language." in splitter_choice:
         language = splitter_choice.split(".")[1].lower()
         splitter = RecursiveCharacterTextSplitter.from_language(language,

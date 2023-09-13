@@ -4,6 +4,8 @@ import tiktoken
 import tempfile
 import os
 from pathlib import Path
+from SemanticHelpers.semantic_metadata import get_all_columns, llm_based_embeds
+from SemanticHelpers.semantic_retrieval import llm_based_metadata_retrieval
 from utils import text_splitter, document_loading
 
 
@@ -20,24 +22,53 @@ st.info("""Pre-process your document into chunks and metadata using Langchain. T
 # Loaders
 st.header("Document Loading")
 st.info("""Load a document from a URL or a file. Pick the type of loader you want to use.""")
-doc = None
 # url = st.text_input(label="File URL", placeholder="URL for the file")
 # st.text("or")
 uploaded_file = st.file_uploader("Choose a file")
+# Load
+if(uploaded_file):
+    with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+        # Write the data from the BytesIO object to the temporary file
+        temp_file.write(uploaded_file.read())
+            # Explicitly close the file
+        temp_file.close()
+        # Create a Path object using the temporary file's name attribute
+    file_path = str(Path(temp_file.name).resolve())
 loader_choices = ["JSONLoader", "CSVLoader", "PDF", "UnstructuredIO"]
 loader_choice = st.selectbox(
     "Select a document loader", loader_choices
 )
 
 # Selectors
-st.header("Metadata Selectors")
+st.header("Metadata and Embed Selectors")
 st.info("""Only supported for JSON or CSV. \n
 Select what fields from the object you want to use for embeddings vs just as metadata""")
 selectors = False
-if st.toggle(label="Enable selectors"):
+if 'to_embed' not in st.session_state:
+    st.session_state.to_embed = []
+if 'to_metadata' not in st.session_state:
+    st.session_state.to_metadata = []
+if 'metadata_attributes' not in st.session_state:
+    st.session_state.metadata_attributes = ""
+st.session_state.selectors = st.toggle(label="Enable selectors")
+if st.session_state.selectors:
     selectors = True
-    string_to_embed = st.text_input(label="Fields to Embed", placeholder="Comma separated list of fields")
-    string_to_metadata = st.text_input(label="Fields for Metadata", placeholder="Comma separated list of fields")
+    col1, col2, col3 = st.columns([1, 1, 1])
+    with col1:
+        if st.button("🪄 Embedding properties"):
+            st.session_state.to_embed = llm_based_embeds(file_path=file_path, loader_choice=loader_choice)
+    with col2:
+        if st.button("🪄 Metadata properties"):
+            st.session_state.to_metadata = get_all_columns(file_path=file_path, loader_choice=loader_choice)
+    with col3:
+        if st.button("🪄 Metadata attributes"):
+            st.session_state.metadata_attributes = llm_based_metadata_retrieval(file_path=file_path, loader_choice=loader_choice)
+    string_to_embed = st.text_input(label="Fields to Embed", value=",".join(str(x) for x in st.session_state.to_embed))
+    string_to_metadata = st.text_input(label="Fields for Metadata", value=",".join(str(x) for x in st.session_state.to_metadata))
+    if st.session_state.metadata_attributes:
+        st.subheader("Metadata Attributes")
+        st.info("This attributes can be used in conjunction to Langchain Self-Query Retriever.")
+        st.code(st.session_state.metadata_attributes, language="python", line_numbers=True)
 
 #Splitters
 st.header("Text Splitter")
@@ -80,25 +111,20 @@ elif length_function == "Tokens":
 else:
     raise ValueError
 
-splitter_choices = ["RecursiveCharacter", "Character"] + [str(v) for v in Language]
+splitter_choices = ["🪄 Smart Chunking", "RecursiveCharacter", "Character"] + [str(v) for v in Language]
 
 with col4:
     splitter_choice = st.selectbox(
         "Select a Text Splitter", splitter_choices
     )
 
-chunks = []
+if 'splitter_code' not in st.session_state:
+    st.session_state.splitter_code = None
+
+if 'chunks' not in st.session_state:
+    st.session_state.chunks = []
 # Split text button
 if st.button("Process Text", use_container_width=True):
-    # Load
-    if(uploaded_file):
-        with tempfile.NamedTemporaryFile(delete=False) as temp_file:
-            # Write the data from the BytesIO object to the temporary file
-            temp_file.write(uploaded_file.read())
-                # Explicitly close the file
-            temp_file.close()
-            # Create a Path object using the temporary file's name attribute
-        file_path = str(Path(temp_file.name).resolve())
         if(selectors):
             fields_to_embed = string_to_embed.split(",")
             fields_to_metadata = string_to_metadata.split(",")
@@ -106,20 +132,23 @@ if st.button("Process Text", use_container_width=True):
         else: 
             documents = document_loading(temp_file=file_path, loader_choice=loader_choice)
         # Split
-        print(documents)
-        chunks = text_splitter(splitter_choice=splitter_choice, chunk_size=chunk_size, chunk_overlap=chunk_overlap, length_function=length_function, documents=documents)
+        st.session_state.chunks = text_splitter(splitter_choice=splitter_choice, chunk_size=chunk_size, chunk_overlap=chunk_overlap, length_function=length_function, documents=documents)
         os.remove(temp_file.name)
 
-if(len(chunks) > 0 ):
+if(len(st.session_state.chunks) > 0 ):
     tabs = []
-    for i in range(len(chunks)):
+    for i in range(len(st.session_state.chunks)):
         tabs.append("Chunk " + str(i+1))
     allTabs = st.tabs(tabs)
 
     for i in range(len(allTabs)):
         with allTabs[i]:
             st.subheader("Page Content")
-            st.text(chunks[i].page_content)
+            st.text(st.session_state.chunks[i].page_content)
             if(selectors):
                 st.subheader("Metadata")
-                st.text(chunks[i].metadata)
+                st.text(st.session_state.chunks[i].metadata)
+
+if(st.session_state.splitter_code):
+    st.subheader("🪄 Smart Chunking Code")
+    st.text(st.session_state.splitter_code)

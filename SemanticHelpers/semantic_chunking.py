@@ -3,8 +3,6 @@ from langchain.docstore.document import Document
 from typing import (
     List,
 )
-import nltk
-from nltk.tokenize import word_tokenize
 
 def llm_based_chunking_strategy(text:str) -> str:
     messages = []
@@ -45,8 +43,7 @@ def llm_based_chunking_code(text:str, chunking_strategy:str) -> str:
     return response_message
 
 def llm_based_chunking_prep(text:str) -> str:
-    tokens = word_tokenize(text)
-    fixed_text =  " ".join(tokens[:1000])
+    fixed_text = cut_text(text)
     chunking_strategy = llm_based_chunking_strategy(text=fixed_text)['content']
     chunking_code = llm_based_chunking_code(text=fixed_text, chunking_strategy=chunking_strategy)['content']
     chunking_code_exec = chunking_code.split("```python")[1].split("```")[0]
@@ -61,3 +58,16 @@ def llm_based_chunking(documents:List[Document], chunking_code_exec: str) -> Lis
             result_doc.append(Document(page_content=result, metadata=doc.metadata))
     return result_doc
 
+
+def cut_text(s):
+    words = s.split()  # Split the string into a list of words
+    word_count = len(words)
+    
+    if word_count <= 750:
+        return s  # If the string is less than or equal to 750 words, return the entire string
+    
+    if word_count > 750:
+        if word_count >= 1250:  # Check if we can skip 500 and still get 750
+            return ' '.join(words[500:1250])  # Skip the first 500 words and take the next 750 words
+        else:
+            return ' '.join(words[word_count - 750:word_count])  # Take the last 750 words

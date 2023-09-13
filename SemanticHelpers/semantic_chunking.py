@@ -31,6 +31,7 @@ def llm_based_chunking_code(text:str, chunking_strategy:str) -> str:
     messages = [
         {"role": "system", "content": ('You are helpful developer that writes python code.' + 
                                         'Output the code in this format: ```python def split_text_into_chunks(text): <Insert Code>```' +
+                                        'The function `split_text_into_chunks` should output an array of chunks.'
                                         'Implement the strategy provided by the user to help split text.')},
         {"role": "user", "content": chunking_strategy}
     ]

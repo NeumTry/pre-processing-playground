@@ -19,18 +19,25 @@ def read_file_and_prepare_input(file_path, loader_choice):
         try:
             with open(file_path, 'r') as json_file:
                 data = json.load(json_file)
+                
                 if isinstance(data, list):
                     example_rows = data[:2]
                     columns = list(data[0].keys()) if data else []
+                    
                 elif isinstance(data, dict):
-                    example_rows = list(data.values())[:2]
+                    example_rows = [data]
                     columns = list(data.keys())
+                    
                 else:
                     print("Error: JSON file should contain a list or dictionary.")
-                    return None
+                    exit(1)
+                    
         except json.JSONDecodeError:
             print("Error: Invalid JSON format in the file.")
-            return None
+            exit(1)
+        except FileNotFoundError:
+            print("Error: File not found.")
+            exit(1)
 
     if columns:
         text_input += "Columns (Properties): " + ', '.join(columns) + "\n"

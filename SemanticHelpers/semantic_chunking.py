@@ -50,7 +50,7 @@ def llm_based_chunking_prep(text:str) -> str:
     chunking_code_exec = chunking_code.split("```python")[1].split("```")[0]
     return chunking_code_exec
 
-def llm_based_chunking(documents:List[Document], chunking_code_exec: str) -> List[str]:
+def llm_based_chunking(documents:List[Document], chunking_code_exec: str) -> List[Document]:
     exec(chunking_code_exec, globals())
     result_doc = []
     for doc in documents:

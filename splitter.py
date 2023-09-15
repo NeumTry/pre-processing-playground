@@ -4,8 +4,11 @@ import tiktoken
 import tempfile
 import os
 from pathlib import Path
-from SemanticHelpers.semantic_metadata import get_all_columns, llm_based_embeds
-from SemanticHelpers.semantic_retrieval import llm_based_metadata_retrieval
+from neumai_tools import (
+    fields_for_metadata, 
+    fields_to_embed, 
+    metadata_attributes_for_retrieval
+)
 from utils import text_splitter, document_loading
 
 
@@ -56,13 +59,13 @@ if st.session_state.selectors:
     col1, col2, col3 = st.columns([1, 1, 1])
     with col1:
         if st.button("🪄 Embedding properties"):
-            st.session_state.to_embed = llm_based_embeds(file_path=file_path, loader_choice=loader_choice)
+            st.session_state.to_embed = fields_to_embed(file_path=file_path, loader_choice=loader_choice)
     with col2:
         if st.button("🪄 Metadata properties"):
-            st.session_state.to_metadata = get_all_columns(file_path=file_path, loader_choice=loader_choice)
+            st.session_state.to_metadata = fields_for_metadata(file_path=file_path, loader_choice=loader_choice)
     with col3:
         if st.button("🪄 Metadata attributes"):
-            st.session_state.metadata_attributes = llm_based_metadata_retrieval(file_path=file_path, loader_choice=loader_choice)
+            st.session_state.metadata_attributes = metadata_attributes_for_retrieval(file_path=file_path, loader_choice=loader_choice)
     string_to_embed = st.text_input(label="Fields to Embed", value=",".join(str(x) for x in st.session_state.to_embed))
     string_to_metadata = st.text_input(label="Fields for Metadata", value=",".join(str(x) for x in st.session_state.to_metadata))
     if st.session_state.metadata_attributes:
@@ -73,7 +76,6 @@ if st.session_state.selectors:
 #Splitters
 st.header("Text Splitter")
 st.info("""Split a text into chunks using a **Text Splitter**. Parameters include:
-
 - `chunk_size`: Max size of the resulting chunks (in either characters or tokens, as selected)
 - `chunk_overlap`: Overlap between the resulting chunks (in either characters or tokens, as selected)
 - `length_function`: How to measure lengths of chunks, examples are included for either characters or tokens

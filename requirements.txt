@@ -5,3 +5,4 @@ unstructured[all-docs]==0.10.12
 pypdf==3.15.5
 openai==0.28.0
 pandas==2.1.0
+neumai-tool==0.0.7

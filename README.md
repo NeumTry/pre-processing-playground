@@ -1,5 +1,7 @@
 # Pre-processing playground
 
+[![Playground overview](https://img.youtube.com/vi/n3L680vmGJo/0.jpg)](https://www.youtube.com/watch?v=n3L680vmGJo)
+
 To use the hosted app, head to [https://neumai-playground.streamlit.app/](https://neumai-playground.streamlit.app/)
 Project is a fork of the [Langchain Text Splitter Explorer](https://github.com/langchain-ai/text-split-explorer). 
 

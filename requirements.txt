@@ -1,3 +1,4 @@
+neumai-tools==0.0.7
 tiktoken==0.4.0
 langchain==0.0.284
 streamlit==1.26.0
@@ -5,4 +6,3 @@ unstructured[all-docs]==0.10.12
 pypdf==3.15.5
 openai==0.28.0
 pandas==2.1.0
-neumai-tools==0.0.7

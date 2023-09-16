@@ -1,4 +1,4 @@
---upgrade pip
+pip==23.2.1
 neumai-tools==0.0.7
 tiktoken==0.4.0
 langchain==0.0.284

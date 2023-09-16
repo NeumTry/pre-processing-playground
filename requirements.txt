@@ -1,5 +1,4 @@
-pip==23.2.1
-neumai-tools==0.0.7
+neumai-tools
 tiktoken==0.4.0
 langchain==0.0.284
 streamlit==1.26.0

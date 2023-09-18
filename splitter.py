@@ -137,8 +137,10 @@ if st.button("Process Text", use_container_width=True):
 
 if(len(st.session_state.chunks) > 0 ):
     tabs = []
+    data = ""
     for i in range(len(st.session_state.chunks)):
         tabs.append("Chunk " + str(i+1))
+        data += st.session_state.chunks[i].page_content + "\n---------------------------\n"
     allTabs = st.tabs(tabs)
 
     for i in range(len(allTabs)):
@@ -148,6 +150,8 @@ if(len(st.session_state.chunks) > 0 ):
             if(selectors):
                 st.subheader("Metadata")
                 st.text(st.session_state.chunks[i].metadata)
+    st.download_button("Download chunks", data=data, use_container_width=True)
+
 
 if(st.session_state.splitter_code):
     st.subheader("🪄 Smart Chunking Code")

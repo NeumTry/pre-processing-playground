@@ -8,6 +8,18 @@ from SemanticHelpers.semantic_metadata import get_all_columns, llm_based_embeds
 from SemanticHelpers.semantic_retrieval import llm_based_metadata_retrieval
 from utils import text_splitter, document_loading
 
+# State variables
+if 'to_embed' not in st.session_state:
+    st.session_state.to_embed = []
+if 'to_metadata' not in st.session_state:
+    st.session_state.to_metadata = []
+if 'metadata_attributes' not in st.session_state:
+    st.session_state.metadata_attributes = ""
+if 'splitter_code' not in st.session_state:
+    st.session_state.splitter_code = None
+
+if 'chunks' not in st.session_state:
+    st.session_state.chunks = []
 
 # Streamlit UI
 st.title("Pre-processing playground")
@@ -44,12 +56,6 @@ st.header("Metadata and Embed Selectors")
 st.info("""Only supported for JSON or CSV. \n
 Select what fields from the object you want to use for embeddings vs just as metadata""")
 selectors = False
-if 'to_embed' not in st.session_state:
-    st.session_state.to_embed = []
-if 'to_metadata' not in st.session_state:
-    st.session_state.to_metadata = []
-if 'metadata_attributes' not in st.session_state:
-    st.session_state.metadata_attributes = ""
 st.session_state.selectors = st.toggle(label="Enable selectors")
 if st.session_state.selectors:
     selectors = True
@@ -118,11 +124,6 @@ with col4:
         "Select a Text Splitter", splitter_choices
     )
 
-if 'splitter_code' not in st.session_state:
-    st.session_state.splitter_code = None
-
-if 'chunks' not in st.session_state:
-    st.session_state.chunks = []
 # Split text button
 if st.button("Process Text", use_container_width=True):
         if(selectors):

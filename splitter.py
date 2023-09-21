@@ -136,23 +136,13 @@ if st.button("Process Text", use_container_width=True):
         os.remove(temp_file.name)
 
 if(len(st.session_state.chunks) > 0 ):
-    tabs = []
     data = ""
     for i in range(len(st.session_state.chunks)):
-        tabs.append("Chunk " + str(i+1))
         data += st.session_state.chunks[i].page_content + "\n---------------------------\n"
-    allTabs = st.tabs(tabs)
+    with st.expander("See full set of chunks"):
+        st.text(data)
+    if(st.session_state.splitter_code):
+        with st.expander("🪄 Smart Chunking Code"):
+            st.text(st.session_state.splitter_code)
+    st.download_button("Download text chunks", data=data, use_container_width=True)
 
-    for i in range(len(allTabs)):
-        with allTabs[i]:
-            st.subheader("Page Content")
-            st.text(st.session_state.chunks[i].page_content)
-            if(selectors):
-                st.subheader("Metadata")
-                st.text(st.session_state.chunks[i].metadata)
-    st.download_button("Download chunks", data=data, use_container_width=True)
-
-
-if(st.session_state.splitter_code):
-    st.subheader("🪄 Smart Chunking Code")
-    st.text(st.session_state.splitter_code)
